@@ -1,0 +1,27 @@
+name: Nightly Class Trend Analysis
+
+on:
+  schedule:
+    # 毎日 午前2時00分 (JST) に実行 (UTCで記述するため17時)
+    - cron: '0 17 * * *'
+  workflow_dispatch: # 手動で「今すぐ実行」ボタンを押せるようにする
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          
+      - name: Install dependencies
+        run: pip install google-generativeai PyGithub
+        
+      - name: Run Trend Analysis
+        env:
+          ORG_READ_TOKEN: ${{ secrets.ORG_READ_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python analyze_class_trends.py
