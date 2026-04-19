@@ -2,20 +2,18 @@ import os
 import google.generativeai as genai
 from github import Github
 
-# 設定値
+# 設定値（ここを変更しました）
 ORG_NAME = "cac-it-training-2026"
-ASSIGNMENT_PREFIX = "java-" # Classroomで設定した課題名のプレフィックス
-TARGET_FILE = "java_comprehension_exercises_volume1/src/**/*.java"    # 分析したいファイルパス
+ASSIGNMENT_PREFIX = "java-"  # 「java-ユーザー名」に対応
+BASE_DIR = "java_comprehension_exercises_volume1/src/" # 検索の起点となるディレクトリ
 
 # 認証設定
-github_token = os.getenv("ORG_READ_TOKE")
+github_token = os.getenv("ORG_READ_TOKEN")
 gemini_key = os.getenv("GEMINI_API_KEY")
 
 g = Github(github_token)
 genai.configure(api_key=gemini_key)
-
-# 注意: 大量のコードを読み込ませるため、必ず 'gemini-1.5-pro' を使用します
-model = genai.GenerativeModel('gemini-1.5-pro')
+model = genai.GenerativeModel('gemini-2.5-pro')
 
 def collect_student_code():
     org = g.get_organization(ORG_NAME)
@@ -25,23 +23,40 @@ def collect_student_code():
     for repo in org.get_repos():
         if repo.name.startswith(ASSIGNMENT_PREFIX):
             student_id = repo.name.replace(ASSIGNMENT_PREFIX, "")
+            
+            all_code_data += f"\n\n====================\n"
+            all_code_data += f"Student: {student_id}\n"
+            all_code_data += f"====================\n"
+            
             try:
-                # 対象ファイルのコードを取得
-                file_content = repo.get_contents(TARGET_FILE)
-                code = file_content.decoded_content.decode('utf-8')
+                # デフォルトブランチ（mainなど）のツリー（ファイル構造）を再帰的に全取得
+                branch = repo.default_branch
+                tree = repo.get_git_tree(branch, recursive=True).tree
                 
-                # 誰のコードかわかるように区切り文字を入れる
-                all_code_data += f"\n\n====================\n"
-                all_code_data += f"Student: {student_id}\n"
-                all_code_data += f"====================\n"
-                all_code_data += code
+                found_files = False
+                for item in tree:
+                    # 指定したフォルダ配下であり、かつ拡張子が .java のものを抽出
+                    if item.path.startswith(BASE_DIR) and item.path.endswith(".java"):
+                        # ファイルの中身を取得
+                        file_content = repo.get_contents(item.path)
+                        code = file_content.decoded_content.decode('utf-8')
+                        
+                        # ファイル名を見出しにしてコードを結合
+                        all_code_data += f"\n--- File: {item.path} ---\n"
+                        all_code_data += code
+                        found_files = True
+                        
+                if not found_files:
+                    all_code_data += "(対象のJavaファイルがまだ作成されていません)\n"
+                    
             except Exception as e:
-                # まだファイルが作られていない受講生はスキップ
-                pass
+                # リポジトリが空（初期コミットもない）場合などのエラー回避
+                all_code_data += f"(コード取得スキップ: {e})\n"
                 
     return all_code_data
 
 def analyze_trends(code_data):
+    # プロンプト部分は前回と同じでOKです
     prompt = f"""
     あなたはプロのJava技術研修講師です。
     以下に、新入社員120名が提出したJavaの練習問題のコードを列挙します。
@@ -69,5 +84,3 @@ if __name__ == "__main__":
     
     print("\n【解析レポート】\n")
     print(report)
-    
-    # ※ここでSlack APIなどを叩いて送信する処理を入れるとさらに便利です
