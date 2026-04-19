@@ -1,9 +1,9 @@
 name: Nightly Class Trend Analysis
 
 on:
-  schedule:
-    # 毎日 午前2時00分 (JST) に実行 (UTCで記述するため17時)
-    - cron: '0 17 * * *'
+  # schedule:
+  #   # 毎日 午前2時00分 (JST) に実行 (UTCで記述するため17時)
+  #   - cron: '0 17 * * *'
   workflow_dispatch: # 手動で「今すぐ実行」ボタンを押せるようにする
 
 jobs:
