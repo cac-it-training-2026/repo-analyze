@@ -6,8 +6,14 @@ from github import Github, Auth
 
 # 設定値（ここを変更しました）
 ORG_NAME = "cac-it-training-2026"
-ASSIGNMENT_PREFIX = "java-"  # 「java-ユーザー名」に対応
-BASE_DIR = "java_comprehension_exercises_volume1/src/" # 検索の起点となるディレクトリ
+
+# 理解度演習①
+# ASSIGNMENT_PREFIX = "java-"  # 「java-ユーザー名」に対応
+# BASE_DIR = "java_comprehension_exercises_volume1/src/" # 検索の起点となるディレクトリ
+
+# 100本ノック
+ASSIGNMENT_PREFIX = "java100-github-classroom2nd-"  # 「java-ユーザー名」に対応
+BASE_DIR = "Java100_questions_cac2nd/src/" # 検索の起点となるディレクトリ
 
 # 認証設定
 github_token = os.getenv("ORG_READ_TOKEN")
@@ -71,15 +77,14 @@ def collect_student_code():
 
 def analyze_trends(code_data):
     prompt = f"""
-    あなたはプロのJava技術研修講師です。
     以下に、新入社員120名が提出したJavaの練習問題のコードを列挙します。
-    これらを全体的に分析し、以下のフォーマットでレポートを作成してください。
+    これらを分析し、以下のフォーマットでレポートを作成してください。
     
     【出力フォーマット】
-    1. クラス全体の理解度サマリー（よくできている点）
-    2. 全体に共通して見られる「アンチパターン」や「誤解」のトップ3
-    3. 明日の講義で補足説明すべき重要な概念
-    4. （もしあれば）特異な実装をしており、個別フォローが必要かもしれない受講生IDと理由
+    1. 各リポジトリの最終進捗（ユーザー名：最終コミットクラス：コミット日時）
+    2. クラス全体の理解度サマリー（よくできている点）
+    3. 全体に共通して見られる「アンチパターン」や「誤解」のトップ3
+    4. （もしあれば）他と比べてコミット数が少ない、コミットファイルが少ない、特異な実装をしており、個別フォローが必要かもしれない受講生IDと理由
     
     【受講生コード一覧】
     {code_data}
