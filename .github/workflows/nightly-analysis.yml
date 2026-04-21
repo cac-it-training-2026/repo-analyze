@@ -16,10 +16,8 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-          
-      - name: Install dependencies
-        run: pip install google-generativeai PyGithub
-        
+　　　- name: Install dependencies
+         run: pip install google-genai PyGithub # ← generativeai を genai に変更！
       - name: Run Trend Analysis
         env:
           ORG_READ_TOKEN: ${{ secrets.ORG_READ_TOKEN }}
