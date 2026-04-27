@@ -33,7 +33,7 @@ auth = Auth.Token(github_token)
 g = Github(auth=auth)
 client = genai.Client(api_key=gemini_key)
 
-# 速度と精度を両立する 1.5-flash を推奨
+# 速度優先
 MODEL_NAME = 'gemini-flash-latest' 
 
 # ==========================================
@@ -102,7 +102,7 @@ def analyze_in_batches(student_codes):
         prompt_map = f"""
         以下のコードは、受講生120名のうちの一部のグループ（約{BATCH_SIZE}名）の提出物です。
         このグループ内の「よくある間違い」「良い実装」「特筆すべき受講生ID」を簡潔に箇条書きで抽出してください。
-        また、各受講生の最終コミットクラスを抽出してください。(田中次郎　question01.Main.java)
+        また、各受講生の最終コミットクラスを抽出してください。(sss-tis　question01.Main.java)
         
         【受講生コード】
         {chunk_text}
@@ -128,7 +128,7 @@ def analyze_in_batches(student_codes):
     2. 全体に共通して見られる「アンチパターン」や「誤解」のトップ3
     3. 明日の講義で補足説明すべき重要な概念
     4. 特異な実装をしており、個別フォローが必要な受講生IDと理由（グループ分析で挙がっていれば）
-    5. 受講生全員の最終進捗（最終コミットから算出する）
+    5. 受講生全員の最終進捗（最終コミットから算出する。省略せず全員分の進捗を出力する。ex sss-tis　question01.Main.java）
     
     【各グループの小レポート】
     {all_sub_reports_text}
