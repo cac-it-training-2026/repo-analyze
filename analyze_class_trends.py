@@ -9,15 +9,15 @@ from github import Github, Auth
 ORG_NAME = "cac-it-training-2026"
 
 # 理解度演習①
-# ASSIGNMENT_PREFIX = "java-"  # 「java-ユーザー名」に対応
-# BASE_DIR = "java_comprehension_exercises_volume1/src/" # 検索の起点となるディレクトリ
+ASSIGNMENT_PREFIX = "java-"  # 「java-ユーザー名」に対応
+BASE_DIR = "java_comprehension_exercises_volume1/src/" # 検索の起点となるディレクトリ
 
 # 100本ノック
 # ASSIGNMENT_PREFIX = "java100-github-classroom2nd-"  # 「java-ユーザー名」に対応
 # BASE_DIR = "Java100_questions_cac2nd/src/" # 検索の起点となるディレクトリ
 
-ASSIGNMENT_PREFIX = "java-comprehension-v2-"  # 「java-ユーザー名」に対応
-BASE_DIR = "java_comprehension_exercises_volume2_NO_NAME/src/" # 検索の起点となるディレクトリ
+# ASSIGNMENT_PREFIX = "java-comprehension-v2-"  # 「java-ユーザー名」に対応
+# BASE_DIR = "java_comprehension_exercises_volume2_NO_NAME/src/" # 検索の起点となるディレクトリ
 
 BATCH_SIZE = 20  # 1回のGemini解析に渡す人数（トークン上限対策）
 
