@@ -53,21 +53,22 @@ def fetch_single_repo(repo):
         
         found_files = False
         for item in tree:
-            # 指定フォルダ内の .java ファイルのみを抽出（不要ファイルを弾いてトークン節約）
             if item.path.startswith(BASE_DIR) and item.path.endswith(".java"):
                 file_content = repo.get_contents(item.path)
                 code = file_content.decoded_content.decode('utf-8')
                 student_data += f"\n--- File: {item.path} ---\n{code}\n"
                 found_files = True
                 
+        # 【修正ポイント】ファイルが見つからなかった場合は None を返して除外
         if not found_files:
-            student_data += "(対象のJavaファイルがまだ作成されていません)\n"
+            return None
             
     except Exception as e:
-        student_data += f"(コード取得スキップ: {e})\n"
+        # 初期コミットがない（完全な空リポジトリ）場合も除外
+        return None
         
     return student_data
-
+    
 def collect_student_code_parallel():
     org = g.get_organization(ORG_NAME)
     repos = list(org.get_repos())
