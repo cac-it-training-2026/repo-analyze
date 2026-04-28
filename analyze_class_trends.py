@@ -53,9 +53,15 @@ def fetch_single_repo(repo):
         
         found_files = False
         for item in tree:
-            # 指定フォルダ内の .java ファイルであり、かつ "Test.java" で終わらないものを抽出
-            if item.path.startswith(BASE_DIR) and item.path.endswith(".java") and not item.path.endswith("Test.java"):
-                file_content = repo.get_contents(item.path)
+            if item.path.startswith(BASE_DIR) and item.path.endswith(".java"):
+                
+                # ファイルパスからファイル名だけを取り出す（例: "src/main/XxxTest.java" -> "XxxTest.java"）
+                filename = item.path.split('/')[-1]
+                
+                # ファイル名に "Test" という文字列が含まれていれば除外
+                if "Test" in filename:
+                    continue
+
                 file_content = repo.get_contents(item.path)
                 code = file_content.decoded_content.decode('utf-8')
                 student_data += f"\n--- File: {item.path} ---\n{code}\n"
