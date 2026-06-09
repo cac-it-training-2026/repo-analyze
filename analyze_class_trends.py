@@ -60,6 +60,10 @@ def fetch_single_repo(repo):
         
         found_files = False
         for item in tree:
+            # --- 【追加】ルート直下の "repository" フォルダを丸ごと除外 ---
+            if item.path.startswith("repository/"):
+                continue
+            # --------------------------------------------------------------
             if item.path.startswith(BASE_DIR) and item.path.endswith(".java"):
                 
                 # ファイルパスからファイル名だけを取り出す（例: "src/main/XxxTest.java" -> "XxxTest.java"）
@@ -71,6 +75,16 @@ def fetch_single_repo(repo):
 
                 file_content = repo.get_contents(item.path)
                 code = file_content.decoded_content.decode('utf-8')
+
+                # --- 【追加】巨大ファイル（5万文字以上）のスキップ安全装置 ---
+                if len(code) > 50000:
+                    student_data += f"\n--- File: {item.path} ---\n(※ファイルサイズが異常に大きいため、解析から除外しました。行数: {len(code.splitlines())})\n"
+                    found_files = True
+                    continue
+                # --------------------------------------------------------------
+
+
+                
                 student_data += f"\n--- File: {item.path} ---\n{code}\n"
                 found_files = True
                 
