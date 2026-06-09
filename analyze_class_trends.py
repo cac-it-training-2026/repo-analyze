@@ -26,6 +26,14 @@ ORG_NAME = "cac-it-training-2026"
 ASSIGNMENT_PREFIX = "shared-shop-app-"  
 BASE_DIR = "shared_shop/src/" # 検索の起点となるディレクトリ
 
+# --- 【追加】除外したいリポジトリ名の完全一致リスト ---
+EXCLUDED_REPOS = [
+    "shared-shop-z000",
+    "shared-shop-akimoto",
+    "shared-shop-z99nakayama"
+]
+# ------------------------------------------------------
+
 BATCH_SIZE = 10  # 1回のGemini解析に渡す人数（トークン上限対策）
 
 # 認証設定
@@ -48,6 +56,10 @@ MODEL_NAME = 'gemini-flash-latest'
 # ==========================================
 def fetch_single_repo(repo):
     """1つのリポジトリからコードを取得する関数"""
+    # --- 【追加】除外リストに完全一致するリポジトリはスキップ ---
+    if repo.name in EXCLUDED_REPOS:
+        return None
+    # ------------------------------------------------------------
     if not repo.name.startswith(ASSIGNMENT_PREFIX):
         return None
         
