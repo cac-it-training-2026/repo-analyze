@@ -26,7 +26,7 @@ ORG_NAME = "cac-it-training-2026"
 ASSIGNMENT_PREFIX = "shared-shop-app-"  
 BASE_DIR = "shared_shop/src/" # 検索の起点となるディレクトリ
 
-BATCH_SIZE = 20  # 1回のGemini解析に渡す人数（トークン上限対策）
+BATCH_SIZE = 10  # 1回のGemini解析に渡す人数（トークン上限対策）
 
 # 認証設定
 github_token = os.getenv("ORG_READ_TOKEN")
