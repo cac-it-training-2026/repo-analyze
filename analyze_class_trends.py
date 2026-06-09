@@ -28,9 +28,9 @@ BASE_DIR = "shared_shop/src/" # 検索の起点となるディレクトリ
 
 # --- 【追加】除外したいリポジトリ名の完全一致リスト ---
 EXCLUDED_REPOS = [
-    "shared-shop-z000",
-    "shared-shop-akimoto",
-    "shared-shop-z99nakayama"
+    "shared-shop-app-shared-shop-z000",
+    "shared-shop-app-shared-shop-akimoto",
+    "shared-shop-app-shared-shop-z99nakayama"
 ]
 # ------------------------------------------------------
 
