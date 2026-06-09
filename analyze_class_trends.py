@@ -20,8 +20,11 @@ ORG_NAME = "cac-it-training-2026"
 # ASSIGNMENT_PREFIX = "java-comprehension-v2-"  # 「java-ユーザー名」に対応
 # BASE_DIR = "java_comprehension_exercises_volume2_NO_NAME/src/" # 検索の起点となるディレクトリ
 
-ASSIGNMENT_PREFIX = "spring-practice-"  
-BASE_DIR = "spring_practice/src/" # 検索の起点となるディレクトリ
+# ASSIGNMENT_PREFIX = "spring-practice-"  
+# BASE_DIR = "spring_practice/src/" # 検索の起点となるディレクトリ
+
+ASSIGNMENT_PREFIX = "shared-shop-app-"  
+BASE_DIR = "shared_shop/src/" # 検索の起点となるディレクトリ
 
 BATCH_SIZE = 20  # 1回のGemini解析に渡す人数（トークン上限対策）
 
@@ -112,10 +115,16 @@ def analyze_in_batches(student_codes):
         print(f"  ⏳ グループ {index + 1}/{len(chunks)} を解析中...")
         chunk_text = "".join(chunk)
         
+        # prompt_map = f"""
+        # 以下のコードは、受講生120名のうちの一部のグループ（約{BATCH_SIZE}名）の提出物です。
+        # このグループ内の「よくある間違い」「良い実装」「特筆すべき受講生ID」を簡潔に箇条書きで抽出してください。
+        # また、各受講生の最終コミットクラスを抽出してください。(sss-tis　question01.Main.java)
+
+        # チーム演習
         prompt_map = f"""
-        以下のコードは、受講生120名のうちの一部のグループ（約{BATCH_SIZE}名）の提出物です。
-        このグループ内の「よくある間違い」「良い実装」「特筆すべき受講生ID」を簡潔に箇条書きで抽出してください。
-        また、各受講生の最終コミットクラスを抽出してください。(sss-tis　question01.Main.java)
+        以下のコードは、受講生120名のチーム演習（20グループ）の提出物です。
+        このソースの24時間以内のコミットを見て「よくある間違い」「良い実装」「特筆すべきリポジトリ」を簡潔に箇条書きで抽出してください。
+        また、コミット数が0または極端に少ないリポジトリがあれば挙げてください。
         
         【受講生コード】
         {chunk_text}
@@ -130,18 +139,25 @@ def analyze_in_batches(student_codes):
     # --- Reduceフェーズ（全体の統合） ---
     print("\n📝 各グループの分析結果を統合し、最終レポートを作成します...")
     all_sub_reports_text = "\n".join(sub_reports)
+
+    # 【個人出力フォーマット】
+    # 1. クラス全体の理解度サマリー（よくできている点）
+    # 2. 全体に共通して見られる「アンチパターン」や「誤解」のトップ3
+    # 3. 明日の講義で補足説明すべき重要な概念
+    # 4. 特異な実装をしており、個別フォローが必要な受講生IDと理由（グループ分析で挙がっていれば）
+    # 5. 受講生全員の最終進捗（最終コミットから算出する。省略せず全員分の進捗を出力する。ex sss-tis　question01.Main.java）
+
     
     prompt_reduce = f"""
     あなたはプロのJava技術研修講師です。
     以下は、120名の受講生を複数グループに分けて分析した「小レポート」の集まりです。
     これらを統合し、クラス全体を総括する最終レポートを以下のフォーマットで作成してください。
     
-    【出力フォーマット】
-    1. クラス全体の理解度サマリー（よくできている点）
+    【チーム演習出力フォーマット】
+    1. 全体の理解度サマリー（よくできている点）
     2. 全体に共通して見られる「アンチパターン」や「誤解」のトップ3
-    3. 明日の講義で補足説明すべき重要な概念
-    4. 特異な実装をしており、個別フォローが必要な受講生IDと理由（グループ分析で挙がっていれば）
-    5. 受講生全員の最終進捗（最終コミットから算出する。省略せず全員分の進捗を出力する。ex sss-tis　question01.Main.java）
+    4. 特異な実装をしており、個別指摘が必要なリポジトリと理由（グループ分析で挙がっていれば）
+    5. 24時間以内のコミット数や追加ステップが極端に少ないリポジトリ
     
     【各グループの小レポート】
     {all_sub_reports_text}
