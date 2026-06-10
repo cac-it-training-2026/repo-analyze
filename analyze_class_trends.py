@@ -49,7 +49,7 @@ g = Github(auth=auth)
 client = genai.Client(api_key=gemini_key)
 
 # 速度優先
-MODEL_NAME = 'gemini-flash-latest' 
+MODEL_NAME = 'gemini-pro-latest' 
 
 # ==========================================
 # 1. GitHubからのデータ取得（並列処理で高速化）
